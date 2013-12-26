@@ -86,6 +86,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\CERNSSOWindowsDesktop\CommonAssemblyProperties.cs">
+      <Link>CommonAssemblyProperties.cs</Link>
+    </Compile>
     <Compile Include="..\CERNSSOWindowsDesktop\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
