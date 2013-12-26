@@ -50,7 +50,7 @@ namespace CERNSSOWindowsDesktopTest
             // https://cds.cern.ch/record/1512932/? which is a internal note at ATLAS
 
             var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1512932/?"));
-            Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
+            Assert.AreEqual("Searches for long-lived neutral particles decaying into Heavy Flavors In the Hadronic Calorimeter of ATLAS at sqrt{s} = 8 TeV - CERN Document Server", title, "Title of public paper");
         }
 
         /// <summary>
