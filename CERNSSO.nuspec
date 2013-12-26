@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>CERNSSO</id>
+    <version>1.0.0-beta00</version>
+    <authors>Gordon Watts</authors>
+    <owners>Gordon Watts</owners>
+    <licenseUrl>https://github.com/gordonwatts/CERNSSO/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/gordonwatts/CERNSSO</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Library to automate sign on to CERN's Single Sign On web pages and allow the programmer access to web pages behind the SSO</description>
+    <releaseNotes>This is the first version of this package</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags>CERN Security SSO</tags>
+    <dependencies>
+        <group>
+            <dependency id="HtmlAgilityPack" version="1.4.6" />
+        </group>
+
+        <group targetFramework="windowsphone8">
+            <dependency id="Microsoft.Net.Http" version="2.2.18" />
+        </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOWindowsDesktop.dll" target="lib\net45"/>
+    <file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOWindowsDesktop.xml" target="lib\net45"/>
+    <file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOWindowsPhone.dll" target="lib\windowsphone8"/>
+    <file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOWindowsPhone.XML" target="lib\windowsphone8"/>
+    <file src = "CERNSSOWindowsStore\bin\Release\CERNSSOWindowsStore.dll" target="lib\windows8"/>
+    <file src = "CERNSSOWindowsStore\bin\Release\CERNSSOWindowsStore.XML" target="lib\windows8"/>
+  </files>
+</package>
