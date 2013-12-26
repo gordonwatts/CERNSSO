@@ -99,6 +99,9 @@ namespace CERNSSO
             // going to depend a bit on the authorization method we are using, so we delegate it
             // to code that properly deals with that.
 
+            if (gAuthorize == null)
+                throw new UnauthorizedAccessException(string.Format("URI {0} requires CERN authentication. None given!", requestUri.OriginalString));
+
             var authReq = await gAuthorize(response);
             response = await hc.SendAsync(authReq);
 
@@ -106,6 +109,8 @@ namespace CERNSSO
             // to the place where we can fetch our cookies.
 
             var loginFormRedirectData = ExtractFormInfo(await response.Content.ReadAsStringAsync());
+            if (loginFormRedirectData.Action.IsCERNSSOAuthUri())
+                throw new UnauthorizedAccessException(string.Format("Credentials given didn't allow access to {0}.", requestUri.OriginalString));
 
             var dataRequest = CreateRequest(loginFormRedirectData.Action, loginFormRedirectData.RepostFields);
             response = await hc.SendAsync(dataRequest);
