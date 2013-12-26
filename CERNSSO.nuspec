@@ -19,8 +19,12 @@
 
         <group targetFramework="windowsphone8">
             <dependency id="Microsoft.Net.Http" version="2.2.18" />
+            <dependency id="HtmlAgilityPack" version="1.4.6" />
         </group>
     </dependencies>
+    <frameworkAssemblies>
+        <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
+    </frameworkAssemblies>
   </metadata>
   <files>
     <file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOWindowsDesktop.dll" target="lib\net45"/>
