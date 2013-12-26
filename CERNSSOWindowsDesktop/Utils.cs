@@ -12,7 +12,7 @@ namespace CERNSSO
         /// <returns></returns>
         public static bool IsCERNSSOAuthUri(this Uri u)
         {
-            return u.Fragment.StartsWith("/adfs/ls/");
+            return u.AbsolutePath.StartsWith("/adfs/ls/");
         }
     }
 }
