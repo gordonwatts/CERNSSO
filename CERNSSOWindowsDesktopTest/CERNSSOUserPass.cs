@@ -58,7 +58,8 @@ namespace CERNSSOWindowsDesktopTest
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task AccessATLASPrivateDocument()
+        [ExpectedException(typeof(UnauthorizedAccessException))]
+        public async Task AccessATLASPrivateDocumentBadPass()
         {
             // Setup a bad username/password
 
@@ -68,7 +69,6 @@ namespace CERNSSOWindowsDesktopTest
             // https://cds.cern.ch/record/1512932/? which is a internal note at ATLAS
 
             var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1512932/?"));
-            Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
         }
 
         /// <summary>
