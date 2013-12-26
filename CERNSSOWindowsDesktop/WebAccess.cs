@@ -1,4 +1,6 @@
 ﻿
+using System.Net;
+using System.Threading.Tasks;
 namespace CERNSSO
 {
     /// <summary>
@@ -27,5 +29,15 @@ namespace CERNSSO
         /// </summary>
         public static void ResetCredentials()
         { }
+
+        /// <summary>
+        /// We are given a prepared HTTP web request. Fetch a working response.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static Task<WebResponse> FetchWebResponse(HttpWebRequest request)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
