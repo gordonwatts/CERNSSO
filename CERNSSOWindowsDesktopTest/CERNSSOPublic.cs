@@ -1,10 +1,6 @@
 ﻿using CERNSSO;
 using System;
-using System.Net;
 using System.Threading.Tasks;
-using System.IO;
-using HtmlAgilityPack;
-using System.Linq;
 
 // Get the unit testing framework properly slotted in depending on what project
 // we are working with.
@@ -42,39 +38,22 @@ namespace CERNSSOWindowsDesktopTest
             // https://cds.cern.ch/record/1636207?ln=en which is a public
             // ATLAS paper.
 
-            var title = await GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1636207?ln=en"));
+            var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1636207?ln=en"));
             Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
         }
 
         /// <summary>
-        /// Given a URI of a CDS entry, fetch back the HTML and extract the title
+        /// Attempt to access a private document for which we have no allowed access.
         /// </summary>
-        /// <param name="uri">CERN URI we should be fetching</param>
         /// <returns></returns>
-        private async Task<string> GetCDSPaperTitle(Uri uri)
+        [TestMethod]
+        public async Task AccessATLASPrivateDocumentNoLogin()
         {
-            var h = WebRequest.CreateHttp(uri);
-            var response = await WebAccess.FetchWebResponse(h);
-            return await ExtractHTMLTitleInfo(response);
-        }
+            // Access the HTML on the CDS record at
+            // https://cds.cern.ch/record/1512932/? which is a internal note at ATLAS
 
-        /// <summary>
-        /// Extract the title from the response.
-        /// </summary>
-        /// <param name="resp"></param>
-        /// <returns></returns>
-        private static async Task<string> ExtractHTMLTitleInfo(WebResponse resp)
-        {
-            using (var rdr = new StreamReader(resp.GetResponseStream()))
-            {
-                var text = await rdr.ReadToEndAsync();
-                var doc = new HtmlDocument();
-                doc.LoadHtml(text);
-                var titleNode = doc.DocumentNode.Descendants("title").FirstOrDefault();
-                if (titleNode == null)
-                    throw new InvalidDataException("No title node found for the web page!");
-                return titleNode.InnerHtml;
-            }
+            var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1512932/?"));
+            Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
         }
     }
 }

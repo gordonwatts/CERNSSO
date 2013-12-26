@@ -75,6 +75,9 @@
     <Compile Include="..\CERNSSOWindowsDesktopTest\CERNSSOPublic.cs">
       <Link>CERNSSOPublic.cs</Link>
     </Compile>
+    <Compile Include="..\CERNSSOWindowsDesktopTest\TestUtil.cs">
+      <Link>TestUtil.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>

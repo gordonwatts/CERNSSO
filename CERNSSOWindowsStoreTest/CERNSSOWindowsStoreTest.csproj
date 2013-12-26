@@ -117,6 +117,9 @@
     <Compile Include="..\CERNSSOWindowsDesktopTest\CERNSSOPublic.cs">
       <Link>CERNSSOPublic.cs</Link>
     </Compile>
+    <Compile Include="..\CERNSSOWindowsDesktopTest\TestUtil.cs">
+      <Link>TestUtil.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

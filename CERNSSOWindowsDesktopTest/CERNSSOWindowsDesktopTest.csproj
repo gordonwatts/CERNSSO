@@ -57,7 +57,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CERNSSOPublic.cs" />
+    <Compile Include="credinfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CERNSSOUserPass.cs" />
+    <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CERNSSOWindowsDesktop\CERNSSOWindowsDesktop.csproj">
