@@ -104,6 +104,9 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CERNSSOWindowsDesktop\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
     <Compile Include="..\CERNSSOWindowsDesktop\WebAccess.cs">
       <Link>WebAccess.cs</Link>
     </Compile>
