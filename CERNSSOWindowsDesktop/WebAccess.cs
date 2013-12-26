@@ -35,9 +35,9 @@ namespace CERNSSO
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static Task<WebResponse> FetchWebResponse(HttpWebRequest request)
+        public static async Task<WebResponse> FetchWebResponse(HttpWebRequest request)
         {
-            throw new System.NotImplementedException();
+            return await Task.Factory.FromAsync<WebResponse>(request.BeginGetResponse, request.EndGetResponse, null);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace CERNSSOWindowsDesktopTest
             // ATLAS paper.
 
             var title = await GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1636207?ln=en"));
-            Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector", title, "Title of public paper");
+            Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
         }
 
         /// <summary>
