@@ -2,7 +2,7 @@
 
 namespace CERNSSO
 {
-    public static class Utils
+    static class Utils
     {
         /// <summary>
         /// See if this uri matches with one of the authorization URI's that we
@@ -21,6 +21,7 @@ namespace CERNSSO
         /// If the URI is relative, turn it into an absolute one.
         /// </summary>
         /// <param name="orig"></param>
+        /// <param name="abosluteUri"></param>
         /// <returns></returns>
         public static Uri MakeAbsolute(this Uri orig, Uri abosluteUri)
         {

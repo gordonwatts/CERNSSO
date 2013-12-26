@@ -80,6 +80,7 @@ namespace CERNSSO
         /// <summary>
         /// Load a certificate to use for logging into CERN (a personal certificate).
         /// </summary>
+        /// <param name="cert">The certificate to use when we access the CERN website.</param>
         public static void LoadCertificate(X509Certificate2 cert)
         {
             // The header has to be this funny cert request - or we won't get back responses we can interpret.
@@ -135,9 +136,9 @@ namespace CERNSSO
         }
 #endif
         /// <summary>
-        /// Clears out all information we've cached. This is useful mainly for testing
-        /// to make sure the state of the library is reset.
+        /// Clears out all information we've cached.
         /// </summary>
+        /// <remarks>This was added to aid in testing, mostly.</remarks>
         public static void ResetCredentials()
         {
             // Release all the delegates
@@ -155,8 +156,9 @@ namespace CERNSSO
         /// <summary>
         /// We are given a prepared HTTP web request. Fetch a working response.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="requestUri">The URI of the CERN SSO resource you want to fetch.</param>
+        /// <returns>A response object that should have the data requested in it. Or if authentication fails, it will throw an UnauthorizedAccess exception.</returns>
+        /// <remarks>If this is called against a URI that doesn't require authentication, this should work just fine.</remarks>
         public static async Task<HttpResponseMessage> GetWebResponse(Uri requestUri)
         {
             // Run the web request. Perhaps we will get lucky. We know we are lucky if one
@@ -242,7 +244,9 @@ namespace CERNSSO
         /// <summary>
         /// Perform a log-in using a username and password.
         /// </summary>
-        /// <param name="response">Response message from the resource load that triggered this</param>
+        /// <param name="password"></param>
+        /// <param name="response"></param>
+        /// <param name="username"></param>
         private static async Task<HttpRequestMessage> AuthorizeWithUsernameAndPassword(HttpResponseMessage response, string username, string password)
         {
             var signinFormData = ExtractFormInfo(await response.Content.ReadAsStringAsync());
@@ -268,7 +272,7 @@ namespace CERNSSO
         /// Create and normalize a request to the various CERN end-points.
         /// </summary>
         /// <param name="u"></param>
-        /// <param name="dictionary"></param>
+        /// <param name="formData"></param>
         /// <returns></returns>
         private static HttpRequestMessage CreateRequest(Uri u, IDictionary<string, string> formData = null)
         {
@@ -303,8 +307,6 @@ namespace CERNSSO
         /// <summary>
         /// Extract form data
         /// </summary>
-        /// <param name="homeSiteLoginRedirect"></param>
-        /// <param name="repostFields"></param>
         /// <param name="text"></param>
         /// <returns></returns>
         private static FormInfo ExtractFormInfo(string text)
