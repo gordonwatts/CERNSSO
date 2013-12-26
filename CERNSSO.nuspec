@@ -33,5 +33,6 @@
     <file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOWindowsPhone.XML" target="lib\windowsphone8"/>
     <file src = "CERNSSOWindowsStore\bin\Release\CERNSSOWindowsStore.dll" target="lib\windows8"/>
     <file src = "CERNSSOWindowsStore\bin\Release\CERNSSOWindowsStore.XML" target="lib\windows8"/>
+    <file src = "readme.txt" target="" />
   </files>
 </package>
