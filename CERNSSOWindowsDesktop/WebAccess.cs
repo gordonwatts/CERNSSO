@@ -7,6 +7,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
+#if WINDOWS_DESKTOP
+using System.Security.Cryptography.X509Certificates;
+#endif
+
 namespace CERNSSO
 {
     /// <summary>
@@ -27,6 +31,17 @@ namespace CERNSSO
         /// The argument is the response from the resource that triggered the login.
         /// </summary>
         private static Func<HttpResponseMessage, Task<HttpRequestMessage>> gAuthorize = null;
+
+        /// <summary>
+        /// Called to create the HTTP handler. If null, then the default is created.
+        /// </summary>
+        /// <remarks>Don't set the cookie container. They will be over-written.</remarks>
+        private static Func<HttpClientHandler> gCreateHttpHandler = null;
+
+        /// <summary>
+        /// Set to true so we know when we have credential information.
+        /// </summary>
+        private static bool gCredentialInformationValid = false;
 
         /// <summary>
         /// After calling this future web accesses will use this username and password
@@ -53,7 +68,40 @@ namespace CERNSSO
                 {
                     return AuthorizeWithUsernameAndPassword(resp, username, password);
                 };
+
+            // and let the rest of the system know.
+            gCredentialInformationValid = true;
         }
+
+#if WINDOWS_DESKTOP
+        /// <summary>
+        /// Load a certificate to use for logging into CERN (a personal certificate).
+        /// </summary>
+        public static void LoadCertificate(X509Certificate2 cert)
+        {
+            // The header has to be this funny cert request - or we won't get back responses we can interpret.
+            gPrepWebRequest = reqMsg =>
+            {
+                reqMsg.Headers.Add("User-Agent", "curl-sso-certificate/0.5.1 (Mozilla)");
+            };
+
+            // We need a special handler that will sent certificates up to the CERN web sites.
+            gCreateHttpHandler = () =>
+                {
+                    var h = new WebRequestHandler();
+                    h.ClientCertificateOptions = ClientCertificateOption.Manual;
+                    h.ClientCertificates.Add(cert);
+                    return h;
+                };
+
+            // The authentication should happen as part of the redirect, actually. So
+            // we just return the the thing.
+            gAuthorize = null;
+
+            // and let the rest of the system know.
+            gCredentialInformationValid = true;
+        }
+#endif
 
         /// <summary>
         /// Clears out all information we've cached. This is useful mainly for testing
@@ -68,6 +116,9 @@ namespace CERNSSO
             // Release the web access client - this contains cookies that may match
             // with the above.
             gClient = null;
+
+            // And everything is now invalid...
+            gCredentialInformationValid = false;
         }
 
         /// <summary>
@@ -97,13 +148,17 @@ namespace CERNSSO
 
             // At this point the resource is going to require authorization. The next step is
             // going to depend a bit on the authorization method we are using, so we delegate it
-            // to code that properly deals with that.
+            // to code that properly deals with that. If no authorize step is required, then
+            // we just assume that the last query has the data we need.
 
-            if (gAuthorize == null)
+            if (!gCredentialInformationValid)
                 throw new UnauthorizedAccessException(string.Format("URI {0} requires CERN authentication. None given!", requestUri.OriginalString));
 
-            var authReq = await gAuthorize(response);
-            response = await hc.SendAsync(authReq);
+            if (gAuthorize != null)
+            {
+                var authReq = await gAuthorize(response);
+                response = await hc.SendAsync(authReq);
+            }
 
             // At this point, what we should have back is the standard form that redirects us
             // to the place where we can fetch our cookies.
@@ -132,8 +187,12 @@ namespace CERNSSO
             if (gClient != null)
                 return gClient;
 
+            // Create the handler
+            HttpClientHandler handler = gCreateHttpHandler != null ? gCreateHttpHandler() : new HttpClientHandler();
+
             var cookies = new CookieContainer();
-            var handler = new HttpClientHandler() { CookieContainer = cookies };
+            handler.CookieContainer = cookies;
+
             gClient = new HttpClient(handler);
 
             return gClient;
