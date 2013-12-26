@@ -6,6 +6,9 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+#if CMPWindowsStore
+
+#endif
 
 #if WINDOWS_DESKTOP
 using System.Security.Cryptography.X509Certificates;
@@ -103,6 +106,34 @@ namespace CERNSSO
         }
 #endif
 
+#if CMPWindowsStore
+        /// <summary>
+        /// Use the Windows Store app's default certificate store to do the authentication.
+        /// </summary>
+        public static void UseCertificateStore()
+        {
+            // The header has to be this funny cert request - or we won't get back responses we can interpret.
+            gPrepWebRequest = reqMsg =>
+            {
+                reqMsg.Headers.Add("User-Agent", "curl-sso-certificate/0.5.1 (Mozilla)");
+            };
+
+            // We need a special handler that will sent certificates up to the CERN web sites.
+            gCreateHttpHandler = () =>
+                {
+                    var h = new HttpClientHandler();
+                    h.ClientCertificateOptions = ClientCertificateOption.Automatic;
+                    return h;
+                };
+
+            // The authentication should happen as part of the redirect, actually. So
+            // we just return the the thing.
+            gAuthorize = null;
+
+            // and let the rest of the system know.
+            gCredentialInformationValid = true;
+        }
+#endif
         /// <summary>
         /// Clears out all information we've cached. This is useful mainly for testing
         /// to make sure the state of the library is reset.
