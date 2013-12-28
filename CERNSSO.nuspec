@@ -2,7 +2,7 @@
 <package >
   <metadata>
 	<id>CERNSSO</id>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<authors>Gordon Watts</authors>
 	<owners>Gordon Watts</owners>
 	<licenseUrl>https://github.com/gordonwatts/CERNSSO/blob/master/license.txt</licenseUrl>
@@ -20,6 +20,9 @@
 		<group targetFramework="windowsphone8">
 			<dependency id="Microsoft.Net.Http" version="2.2.18" />
 			<dependency id="HtmlAgilityPack" version="1.4.6" />
+		</group>
+		<group targetFramework="portable-net45+windowsphone8+windows8">
+			<dependency id="Microsoft.Net.Http" version="2.2.18" />
 		</group>
 	</dependencies>
 	<frameworkAssemblies>
