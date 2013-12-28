@@ -183,7 +183,7 @@ $RECYCLE.BIN/
 .DS_Store
 
 # Nuget built packages
-.nupkg
+*.nupkg
 
 #############
 ## Python
