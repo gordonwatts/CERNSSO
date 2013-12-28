@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CERNSSOWindowsStore</RootNamespace>
-    <AssemblyName>CERNSSOWindowsStore</AssemblyName>
+    <AssemblyName>CERNSSOPCL</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
@@ -27,7 +27,7 @@
     <DefineConstants>TRACE;DEBUG;NETFX_CORE; CMPWindowsStore</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\CERNSSOWindowsStore.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\CERNSSOPCL.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,7 +36,7 @@
     <DefineConstants>TRACE;NETFX_CORE; CMPWindowsStore</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CERNSSOWindowsStore.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\CERNSSOPCL.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,6 +105,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\CERNSSOPCL\CERNWebAccess.cs">
+      <Link>CERNWebAccess.cs</Link>
+    </Compile>
     <Compile Include="..\CERNSSOWindowsDesktop\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>

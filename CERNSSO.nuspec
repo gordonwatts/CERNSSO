@@ -1,38 +1,40 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>CERNSSO</id>
-    <version>1.0.0</version>
-    <authors>Gordon Watts</authors>
-    <owners>Gordon Watts</owners>
-    <licenseUrl>https://github.com/gordonwatts/CERNSSO/blob/master/license.txt</licenseUrl>
-    <projectUrl>https://github.com/gordonwatts/CERNSSO</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Library to automate sign on to CERN's Single Sign On web pages and allow the programmer access to web pages behind the SSO</description>
-    <releaseNotes>This is the first version of this package</releaseNotes>
-    <copyright>Copyright 2013</copyright>
-    <tags>CERN Security SSO</tags>
-    <dependencies>
-        <group>
-            <dependency id="HtmlAgilityPack" version="1.4.6" />
-        </group>
+	<id>CERNSSO</id>
+	<version>1.1.0</version>
+	<authors>Gordon Watts</authors>
+	<owners>Gordon Watts</owners>
+	<licenseUrl>https://github.com/gordonwatts/CERNSSO/blob/master/license.txt</licenseUrl>
+	<projectUrl>https://github.com/gordonwatts/CERNSSO</projectUrl>
+	<requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<description>Library to automate sign on to CERN's Single Sign On web pages and allow the programmer access to web pages behind the SSO</description>
+	<releaseNotes>Remap the package to be usable from a Portable Class Library</releaseNotes>
+	<copyright>Copyright 2013</copyright>
+	<tags>CERN Security SSO</tags>
+	<dependencies>
+		<group>
+			<dependency id="HtmlAgilityPack" version="1.4.6" />
+		</group>
 
-        <group targetFramework="windowsphone8">
-            <dependency id="Microsoft.Net.Http" version="2.2.18" />
-            <dependency id="HtmlAgilityPack" version="1.4.6" />
-        </group>
-    </dependencies>
-    <frameworkAssemblies>
-        <frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
-    </frameworkAssemblies>
+		<group targetFramework="windowsphone8">
+			<dependency id="Microsoft.Net.Http" version="2.2.18" />
+			<dependency id="HtmlAgilityPack" version="1.4.6" />
+		</group>
+	</dependencies>
+	<frameworkAssemblies>
+		<frameworkAssembly assemblyName="System.Net.Http" targetFramework="net45" />
+	</frameworkAssemblies>
   </metadata>
   <files>
-    <file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOWindowsDesktop.dll" target="lib\net45"/>
-    <file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOWindowsDesktop.xml" target="lib\net45"/>
-    <file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOWindowsPhone.dll" target="lib\windowsphone8"/>
-    <file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOWindowsPhone.XML" target="lib\windowsphone8"/>
-    <file src = "CERNSSOWindowsStore\bin\Release\CERNSSOWindowsStore.dll" target="lib\windows8"/>
-    <file src = "CERNSSOWindowsStore\bin\Release\CERNSSOWindowsStore.XML" target="lib\windows8"/>
-    <file src = "readme.txt" target="" />
+	<file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOPCL.dll" target="lib\net45"/>
+	<file src = "CERNSSOWindowsDesktop\bin\Release\CERNSSOPCL.xml" target="lib\net45"/>
+	<file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOPCL.dll" target="lib\windowsphone8"/>
+	<file src = "CERNSSOWindowsPhone\bin\Release\CERNSSOPCL.XML" target="lib\windowsphone8"/>
+	<file src = "CERNSSOWindowsStore\bin\Release\CERNSSOPCL.dll" target="lib\windows8"/>
+	<file src = "CERNSSOWindowsStore\bin\Release\CERNSSOPCL.XML" target="lib\windows8"/>
+	<file src = "CERNSSOPCL\bin\Release\CERNSSOPCL.dll" target="lib\portable-net45+windowsphone8+windows8" />
+	<file src = "CERNSSOPCL\bin\Release\CERNSSOPCL.xml" target="lib\portable-net45+windowsphone8+windows8" />
+	<file src = "readme.txt" target="" />
   </files>
 </package>
