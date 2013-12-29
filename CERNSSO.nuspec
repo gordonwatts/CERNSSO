@@ -8,8 +8,8 @@
 	<licenseUrl>https://github.com/gordonwatts/CERNSSO/blob/master/license.txt</licenseUrl>
 	<projectUrl>https://github.com/gordonwatts/CERNSSO</projectUrl>
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
-	<description>Library to automate sign on to CERN's Single Sign On web pages and allow the programmer access to web pages behind the SSO</description>
-	<releaseNotes>Remap the package to be usable from a Portable Class Library</releaseNotes>
+	<description>Library to automate sign on to CERN's Single Sign On web pages and allow the programmer access to web pages behind the SSO. .NET45, Store, Phone, and PCL.</description>
+	<releaseNotes>Get HTML agility pack in there.</releaseNotes>
 	<copyright>Copyright 2013</copyright>
 	<tags>CERN Security SSO</tags>
 	<dependencies>
