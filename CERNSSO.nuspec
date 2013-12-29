@@ -23,7 +23,7 @@
 		</group>
 		<group targetFramework="portable-net45+windowsphone8+windows8">
 			<dependency id="Microsoft.Net.Http" version="2.2.18" />
-			<dependency id="HtmlAgilityPack" version="1.4.6" />
+			<!--We don't include HTML Agility Pack here b.c. it will have to be included in the platform specific version of the library. -->
 		</group>
 	</dependencies>
 	<frameworkAssemblies>
