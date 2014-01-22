@@ -46,36 +46,6 @@ namespace CERNSSO
         /// </summary>
         private static bool gCredentialInformationValid = false;
 
-        /// <summary>
-        /// After calling this future web accesses will use this username and password
-        /// to access web resources. All previous login information will be erased, along
-        /// with pre-authenticated sites.
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <remarks>
-        /// The current version of the library can't access two different web sites with different
-        /// login credentials.
-        /// </remarks>
-        public static void LoadUsernamePassword(string username, string password)
-        {
-            // We need to assure full interaction with the ASP.NET web service back-end. So simulate Chrome,
-            // which happens to be the browser we used to debug this interaction.
-            gPrepWebRequest = reqMsg =>
-            {
-                reqMsg.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
-            };
-
-            // Run the login. Code is reasonable complex, so we move it below.
-            gAuthorize = resp =>
-                {
-                    return AuthorizeWithUsernameAndPassword(resp, username, password);
-                };
-
-            // and let the rest of the system know.
-            gCredentialInformationValid = true;
-        }
-
 #if WINDOWS_DESKTOP
         /// <summary>
         /// Load a certificate to use for logging into CERN (a personal certificate).
@@ -239,33 +209,6 @@ namespace CERNSSO
         {
             if (gPrepWebRequest != null)
                 gPrepWebRequest(request);
-        }
-
-        /// <summary>
-        /// Perform a log-in using a username and password.
-        /// </summary>
-        /// <param name="password"></param>
-        /// <param name="response"></param>
-        /// <param name="username"></param>
-        private static async Task<HttpRequestMessage> AuthorizeWithUsernameAndPassword(HttpResponseMessage response, string username, string password)
-        {
-            var signinFormData = ExtractFormInfo(await response.Content.ReadAsStringAsync());
-
-            // Set the user name and password, and repost.
-
-            int oldNumberKeys = signinFormData.RepostFields.Count;
-            signinFormData.RepostFields["ctl00$ctl00$NICEMasterPageBodyContent$SiteContentPlaceholder$txtFormsLogin"] = username;
-            signinFormData.RepostFields["ctl00$ctl00$NICEMasterPageBodyContent$SiteContentPlaceholder$txtFormsPassword"] = password;
-            signinFormData.RepostFields["ctl00$ctl00$NICEMasterPageBodyContent$SiteContentPlaceholder$btnFormsLogin"] = "Sign in";
-
-            // Next task is to alter the repost fields a little bit. If we don't do this, we fail authentication. Yes... We do! Yikes! :-)
-            signinFormData.RepostFields.Remove("ctl00$ctl00$NICEMasterPageBodyContent$SiteContentPlaceholder$btnSelectFederation");
-            signinFormData.RepostFields["ctl00$ctl00$NICEMasterPageBodyContent$SiteContentPlaceholder$drpFederation"] = "";
-
-            // If we are doing relative URI's, fix it up.
-            var loginUri = signinFormData.Action.MakeAbsolute(response.RequestMessage.RequestUri);
-
-            return CreateRequest(loginUri, signinFormData.RepostFields);
         }
 
         /// <summary>

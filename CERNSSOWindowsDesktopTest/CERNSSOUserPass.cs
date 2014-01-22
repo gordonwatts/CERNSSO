@@ -1,5 +1,4 @@
-﻿using CERNSSO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,18 +11,6 @@ namespace CERNSSOWindowsDesktopTest
     [TestClass]
     public class CERNSSOUserPass
     {
-        /// <summary>
-        /// Reset the credentials, and then set up a "working" set of username and
-        /// password.
-        /// </summary>
-        [TestInitialize]
-        public void TestInit()
-        {
-            WebAccess.ResetCredentials();
-            var usr = LookupUserPass();
-            WebAccess.LoadUsernamePassword(usr.Item1, usr.Item2);
-        }
-
         /// <summary>
         /// Test accessing a public document even though we
         /// have logged in.
@@ -51,24 +38,6 @@ namespace CERNSSOWindowsDesktopTest
 
             var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1512932/?"));
             Assert.AreEqual("Searches for long-lived neutral particles decaying into Heavy Flavors In the Hadronic Calorimeter of ATLAS at sqrt{s} = 8 TeV - CERN Document Server", title, "Title of public paper");
-        }
-
-        /// <summary>
-        /// Get after a private ATLAS document using a bad username and password.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        [ExpectedException(typeof(UnauthorizedAccessException))]
-        public async Task AccessATLASPrivateDocumentBadPass()
-        {
-            // Setup a bad username/password
-
-            WebAccess.LoadUsernamePassword("myleftfootfortesting", "boguspasswordfortesting");
-
-            // Access the HTML on the CDS record at
-            // https://cds.cern.ch/record/1512932/? which is a internal note at ATLAS
-
-            var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1512932/?"));
         }
 
         /// <summary>

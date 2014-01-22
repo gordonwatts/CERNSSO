@@ -12,21 +12,6 @@ namespace CERNSSOPCL
     public class CERNWebAccess
     {
         /// <summary>
-        /// Use a username and password to log onto the CERN SSO. This is cached for
-        /// the duration of the code (it isn't cached anywhere).
-        /// </summary>
-        /// <param name="username">CERN Username</param>
-        /// <param name="password">CERN Password</param>
-        public static void LoadUsernamePassword(string username, string password)
-        {
-#if WINDOWS_DESKTOP || WINDOWS_PHONE || CMPWindowsStore
-            CERNSSO.WebAccess.LoadUsernamePassword(username, password);
-#else
-            throw new NotImplementedException("The CERNSSO Platform Specific Library has not been included in this project! This is a coding and deployment error.");
-#endif
-        }
-
-        /// <summary>
         /// We are given a prepared HTTP web request. Fetch a working response.
         /// </summary>
         /// <param name="requestUri">The URI of the CERN SSO resource you want to fetch.</param>
