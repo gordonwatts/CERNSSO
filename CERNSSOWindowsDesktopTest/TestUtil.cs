@@ -4,7 +4,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+#if WINDOWS_DESKTOP
+using System.Net.Http;
+#else
 using Windows.Web.Http;
+#endif
 
 namespace CERNSSOWindowsDesktopTest
 {
