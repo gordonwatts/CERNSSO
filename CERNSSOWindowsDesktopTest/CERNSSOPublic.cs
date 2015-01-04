@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 // Get the unit testing framework properly slotted in depending on what project
 // we are working with.
-#if CMPWindowsStore || WINDOWS_PHONE
+#if CMPWindowsStore || WINDOWS_PHONE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 #else
 using Microsoft.VisualStudio.TestTools.UnitTesting;
