@@ -144,14 +144,15 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CERNSSOWindowsStore\CERNSSOWindowsStore.csproj">
-      <Project>{7b3a4900-0025-40d7-9c0d-a2658814fd59}</Project>
-      <Name>CERNSSOWindowsStore</Name>
+    <ProjectReference Include="..\CERNSSO\CERNSSO.csproj">
+      <Project>{ab489e0e-2aee-4687-a6c2-1db5fe75deb0}</Project>
+      <Name>CERNSSO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="HtmlAgilityPack">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\winrt45\HtmlAgilityPack.dll</HintPath>
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\NetCore45\HtmlAgilityPack.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

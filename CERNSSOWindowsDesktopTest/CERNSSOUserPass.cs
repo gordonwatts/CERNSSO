@@ -26,6 +26,8 @@ namespace CERNSSOWindowsDesktopTest
             Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
         }
 
+#if false
+        // We were forced to remove this sort of access, unfortunately.
         /// <summary>
         /// Get after a private ATLAS document using a username and password.
         /// </summary>
@@ -39,7 +41,7 @@ namespace CERNSSOWindowsDesktopTest
             var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1512932/?"));
             Assert.AreEqual("Searches for long-lived neutral particles decaying into Heavy Flavors In the Hadronic Calorimeter of ATLAS at sqrt{s} = 8 TeV - CERN Document Server", title, "Title of public paper");
         }
-
+#endif
         /// <summary>
         /// Get the username and password that we can use to access things here.
         /// </summary>
