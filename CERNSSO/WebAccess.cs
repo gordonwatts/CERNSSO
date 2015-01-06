@@ -71,13 +71,13 @@ namespace CERNSSO
         }
 #endif
 
-#if CMPWindowsStore
+#if false
         /// <summary>
         /// Use the Windows Store app's default certificate store to do the authentication.
         /// </summary>
         public static void UseCertificateStore()
         {
-            // The header has to be this funny cert request - or we won't get back responses we can interpret.
+            // The header has to be this funny user agent - or we won't get back responses we can interpret.
             gPrepWebRequest = reqMsg =>
             {
                 reqMsg.Headers.Add("User-Agent", "curl-sso-certificate/0.5.1 (Mozilla)");
@@ -99,6 +99,7 @@ namespace CERNSSO
             gCredentialInformationValid = true;
         }
 #endif
+
         /// <summary>
         /// Clears out all information we've cached.
         /// </summary>

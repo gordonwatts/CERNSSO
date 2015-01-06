@@ -25,6 +25,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5222B7B1-D8AF-435F-85EF-D8CF4C3C7881}"
 	ProjectSection(SolutionItems) = preProject
 		CERNSSO.nuspec = CERNSSO.nuspec
+		cert.pks12 = cert.pks12
 		license.txt = license.txt
 		readme.txt = readme.txt
 	EndProjectSection
