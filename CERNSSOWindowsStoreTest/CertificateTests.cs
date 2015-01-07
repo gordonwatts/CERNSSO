@@ -161,12 +161,38 @@ namespace CERNSSOWindowsStoreTest
 
         }
 
+        [TestMethod]
+        public async Task LoadProtectedCDSWithCERT()
+        {
+            // Go for a protected agenda, but setup the cert
+            var filter = new HttpBaseProtocolFilter();
+            await InitForTest();
+            filter.ClientCertificate = await FindMyCert();
+            //var cookie = new HttpCookie("indico_session", ".cern.ch", "");
+            var cookie = new HttpCookie("SSOAutologonCertificate", ".cern.ch", "");
+            cookie.Value = "true";
+            filter.CookieManager.SetCookie(cookie);
+
+            var str = await LoadUrl("https://cds.cern.ch/record/1712676?", filter: filter);
+
+        }
+
         // Access the agenda server
-        private static async Task<string> LoadUrl(string url, bool expectingFailure = false, IHttpFilter filter = null)
+        private static async Task<string> LoadUrl(string url, bool expectingFailure = false, HttpBaseProtocolFilter filter = null)
         {
             var hc = filter == null ? new HttpClient() : new HttpClient(filter);
-            var data = await hc.GetStringAsync(new Uri(url));
+            var u = new Uri(url);
+            var data = await hc.GetStringAsync(u);
             Assert.AreNotEqual(0, data.Length);
+            if (filter != null)
+            {
+                Debug.WriteLine("Cookies that are in there now:");
+                foreach (var c in filter.CookieManager.GetCookies(u))
+                {
+                    Debug.WriteLine("  {0} = {1} (expires {2})", c.Name, c.Value, c.Expires.HasValue ? c.Expires.Value.ToString() : "<none>");
+                }
+            }
+            Debug.WriteLine("Return data:");
             Debug.WriteLine(data);
             Assert.AreEqual(expectingFailure, data.Contains("Need password help"));
             return data;
