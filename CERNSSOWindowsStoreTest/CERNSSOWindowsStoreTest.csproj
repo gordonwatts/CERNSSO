@@ -121,6 +121,7 @@
       <Link>TestUtil.cs</Link>
     </Compile>
     <Compile Include="CertificateTests.cs" />
+    <Compile Include="CertUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +135,7 @@
     <Content Include="password.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Include="CERNSSOHttpFilter.Test.cs" />
     <None Include="CERNSSOWindowsStoreTest_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>

@@ -37,9 +37,7 @@ namespace CERNSSOWindowsStoreTest
             }
             else
             {
-                Assert.IsNull(await FindMyCert());
-
-                await LoadCert();
+                await CertUtils.GetCert();
 
                 // Make sure some are there.
                 var certificates = await CertificateStores.FindAllAsync();
@@ -56,31 +54,8 @@ namespace CERNSSOWindowsStoreTest
                 Assert.AreEqual(1, certificates.Count);
 
                 // Make sure things we are going to use for everything are working!
-                Assert.IsNotNull(FindMyCert());
+                Assert.IsNotNull(await CertUtils.GetCert());
             }
-        }
-
-        /// <summary>
-        /// Load a cert up from the application file system
-        /// </summary>
-        /// <returns></returns>
-        private static async Task LoadCert()
-        {
-            // Load up the password.
-            var packageLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
-            var passwordFile = await packageLocation.GetFileAsync("password.txt");
-            var bufferme = await Windows.Storage.FileIO.ReadLinesAsync(passwordFile);
-            var password = bufferme.First();
-            Assert.IsNotNull(password);
-
-            // Load the cert that should have been packaged with us here.
-            var certificate = await packageLocation.GetFileAsync("cert.pfx");
-            var buffer = await Windows.Storage.FileIO.ReadBufferAsync(certificate);
-            var cert = Windows.Security.Cryptography.CryptographicBuffer.EncodeToBase64String(buffer);
-            Assert.IsNotNull(cert);
-
-            // Try loading it into the local store.
-            await CertificateEnrollmentManager.ImportPfxDataAsync(cert, password, ExportOption.NotExportable, KeyProtectionLevel.NoConsent, InstallOptions.DeleteExpired, "mytestcert");
         }
 
         /// <summary>
@@ -89,7 +64,7 @@ namespace CERNSSOWindowsStoreTest
         /// <returns></returns>
         private async Task<bool> ClearAssertStore()
         {
-            var c = await FindMyCert();
+            var c = await CertUtils.FindMyCert();
             if (c != null)
             {
                 return false;
@@ -110,35 +85,6 @@ namespace CERNSSOWindowsStoreTest
 #endif
             }
             return true;
-        }
-
-        /// <summary>
-        /// Normally this would be a test class initializer, but we want to do it a little differently here.
-        /// </summary>
-        /// <returns></returns>
-        async Task InitForTest()
-        {
-            if (await FindMyCert() == null)
-            {
-                await LoadCert();
-            }
-        }
-
-        /// <summary>
-        /// Find a cert in the store.
-        /// </summary>
-        /// <returns></returns>
-        async Task<Certificate> FindMyCert()
-        {
-            var query = new CertificateQuery();
-            query.FriendlyName = "mytestcert";
-            var certificates = await CertificateStores.FindAllAsync(query);
-
-            if (certificates.Count != 1)
-            {
-                return null;
-            }
-            return certificates[0];
         }
 
         [TestMethod]
@@ -167,8 +113,7 @@ namespace CERNSSOWindowsStoreTest
         {
             // Go for a protected agenda, but setup the cert
             var filter = new HttpBaseProtocolFilter();
-            await InitForTest();
-            filter.ClientCertificate = await FindMyCert();
+            filter.ClientCertificate = await CertUtils.GetCert();
             //var cookie = new HttpCookie("indico_session", ".cern.ch", "");
             var cookie = new HttpCookie("SSOAutologonCertificate", ".cern.ch", "");
             cookie.Value = "true";
@@ -183,8 +128,7 @@ namespace CERNSSOWindowsStoreTest
         {
             // Go for a protected agenda, but setup the cert
             var filter = new HttpBaseProtocolFilter();
-            await InitForTest();
-            filter.ClientCertificate = await FindMyCert();
+            filter.ClientCertificate = await CertUtils.GetCert();
             //var cookie = new HttpCookie("indico_session", ".cern.ch", "");
             var cookie = new HttpCookie("SSOAutologonCertificate", ".cern.ch", "");
             cookie.Value = "true";
