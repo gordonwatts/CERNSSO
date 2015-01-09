@@ -31,27 +31,33 @@ namespace CERNSSOWindowsStoreTest
         public async Task LoadCertFromLocalFS()
         {
             // Make sure everything is empty here so we can test).
-            await ClearAssertStore();
-            Assert.IsNull(await FindMyCert());
-
-            await LoadCert();
-
-            // Make sure some are there.
-            var certificates = await CertificateStores.FindAllAsync();
-            Debug.WriteLine("Number of cert is {0}", certificates.Count);
-            foreach (var c in certificates)
+            if (!await ClearAssertStore())
             {
-                Debug.WriteLine("  -> {0}", c.Issuer);
+                Assert.Inconclusive("Unable to unload an already loaded cert, so can't run test!");
             }
-            Assert.IsTrue(certificates.Count > 0); // 3 because there is a liniage.
+            else
+            {
+                Assert.IsNull(await FindMyCert());
 
-            var query = new CertificateQuery();
-            query.FriendlyName = "mytestcert";
-            certificates = await CertificateStores.FindAllAsync(query);
-            Assert.AreEqual(1, certificates.Count);
+                await LoadCert();
 
-            // Make sure things we are going to use for everything are working!
-            Assert.IsNotNull(FindMyCert());
+                // Make sure some are there.
+                var certificates = await CertificateStores.FindAllAsync();
+                Debug.WriteLine("Number of cert is {0}", certificates.Count);
+                foreach (var c in certificates)
+                {
+                    Debug.WriteLine("  -> {0}", c.Issuer);
+                }
+                Assert.IsTrue(certificates.Count > 0); // 3 because there is a liniage.
+
+                var query = new CertificateQuery();
+                query.FriendlyName = "mytestcert";
+                certificates = await CertificateStores.FindAllAsync(query);
+                Assert.AreEqual(1, certificates.Count);
+
+                // Make sure things we are going to use for everything are working!
+                Assert.IsNotNull(FindMyCert());
+            }
         }
 
         /// <summary>
@@ -81,11 +87,15 @@ namespace CERNSSOWindowsStoreTest
         /// Clear things out - in case we need to do this for a test.
         /// </summary>
         /// <returns></returns>
-        private async Task ClearAssertStore()
+        private async Task<bool> ClearAssertStore()
         {
             var c = await FindMyCert();
             if (c != null)
             {
+                return false;
+#if false
+                // Turns out there is currently no way to properly remove a cert - as far as I can tell. I asked, waiting for an answer:
+                // http://stackoverflow.com/questions/27809503/how-can-i-remove-a-certificate-from-my-apps-certificate-store
                 var certs = await CertificateStores.FindAllAsync();
                 Debug.WriteLine("Found a cert to clear in ClearAssertStore:");
                 foreach (var ct in certs)
@@ -97,8 +107,9 @@ namespace CERNSSOWindowsStoreTest
                 if (s != null)
                     s.Delete(c);
                 Assert.IsNull(await FindMyCert());
-                
+#endif
             }
+            return true;
         }
 
         /// <summary>
@@ -141,8 +152,14 @@ namespace CERNSSOWindowsStoreTest
         public async Task LoadProtectedAgendaNoCERT()
         {
             // Go for a protected agenda, but no cert loaded.
-            await ClearAssertStore();
-            var str = await LoadUrl("https://indico.cern.ch/event/359262/", true);
+            if (!await ClearAssertStore())
+            {
+                Assert.Inconclusive("Run in wrong order - a cert was already loaded and we couldn't unload it");
+            }
+            else
+            {
+                var str = await LoadUrl("https://indico.cern.ch/event/359262/", true);
+            }
         }
 
         [TestMethod]
