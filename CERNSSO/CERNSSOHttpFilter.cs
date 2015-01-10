@@ -59,6 +59,12 @@ namespace CERNSSO
                 if (_firstRequest)
                 {
 #if true
+                    //
+                    // This is the proper way to do this. However, the request will generate auto-redirects. And, unfortunately,
+                    // those auto redirects will not have the cookie, and so the login fails to happen.
+                    // The only way to make the log-in work, it seems is to either run the re-directs our selves, or
+                    // to have the code that sits in the #else statement.
+                    //
                     var c = new HttpCookiePairHeaderValue("SSOAutologonCertificate", "true");
                     request.Headers.Cookie.Add(c);
 #else
