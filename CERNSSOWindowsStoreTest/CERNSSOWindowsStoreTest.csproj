@@ -135,7 +135,6 @@
     <Content Include="password.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="CERNSSOHttpFilter.Test.cs" />
     <None Include="CERNSSOWindowsStoreTest_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
