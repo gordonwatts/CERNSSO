@@ -7,6 +7,7 @@ using Windows.Foundation;
 using Windows.Security.Cryptography.Certificates;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
+using Windows.Web.Http.Headers;
 
 namespace CERNSSO
 {
@@ -19,14 +20,15 @@ namespace CERNSSO
         /// Initialize the http filter to provide access to protected CERN websites.
         /// </summary>
         /// <param name="cernCert">The certificate to be used to access the CERN websites. null if no certificate should be used.</param>
-        public CERNSSOHttpFilter(Certificate cernCert)
+        /// <param name="innerFilter">The inner filter in the filter chain. Cannot be null.</param>
+        public CERNSSOHttpFilter(Certificate cernCert, IHttpFilter innerFilter)
         {
-
-        }
-
-        public CERNSSOHttpFilter()
-        {
-            // TODO: Complete member initialization
+            if (innerFilter == null)
+            {
+                throw new ArgumentNullException("innerFilter");
+            }
+            InnerFilter = innerFilter;
+            CERNSSOCert = cernCert;
         }
 
         /// <summary>
@@ -35,9 +37,14 @@ namespace CERNSSO
         public Certificate CERNSSOCert { get; private set; }
 
         /// <summary>
-        /// Hold onto the base http filter. We use it as plain as plain can be.
+        /// Get the inner filter used as the next in the chain.
         /// </summary>
-        private HttpBaseProtocolFilter _baseFilter = null;
+        public IHttpFilter InnerFilter { get; private set; }
+
+        /// <summary>
+        /// Marks the first request, where we know we have to complete the log-in.
+        /// </summary>
+        bool _firstRequest = true;
 
         /// <summary>
         /// Internal method used by HttpClient to send a request.
@@ -46,21 +53,30 @@ namespace CERNSSO
         /// <returns></returns>
         public IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> SendRequestAsync(HttpRequestMessage request)
         {
-            // First time through, make sure we are sending the proper header. Setup the internal filter.
-            if (_baseFilter == null)
+            // First time through, we need to tell the system to auto-login.
+            try
             {
-                _baseFilter = new HttpBaseProtocolFilter();
-                if (CERNSSOCert != null)
+                if (_firstRequest)
                 {
+#if true
+                    var c = new HttpCookiePairHeaderValue("SSOAutologonCertificate", "true");
+                    request.Headers.Cookie.Add(c);
+#else
                     var cookie = new HttpCookie("SSOAutologonCertificate", ".cern.ch", "");
                     cookie.Value = "true";
-                    _baseFilter.CookieManager.SetCookie(cookie);
-                    _baseFilter.ClientCertificate = CERNSSOCert;
+                    (InnerFilter as HttpBaseProtocolFilter).CookieManager.SetCookie(cookie);
+#endif
+                    (InnerFilter as HttpBaseProtocolFilter).ClientCertificate = CERNSSOCert;
                 }
-            }
+                _firstRequest = false;
 
-            // Now do the work.
-            return _baseFilter.SendRequestAsync(request);
+                // Now do the work.
+                return InnerFilter.SendRequestAsync(request);
+            }
+            finally
+            {
+                (InnerFilter as HttpBaseProtocolFilter).ClientCertificate = null;
+            }
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography.Certificates;
 using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 
 namespace CERNSSOWindowsStoreTest
 {
@@ -17,34 +18,42 @@ namespace CERNSSOWindowsStoreTest
 		[TestMethod]
 		public void CreateEmpty()
         {
-            var a = new CERNSSOHttpFilter();
+            var a = new CERNSSOHttpFilter(null, new HttpBaseProtocolFilter());
         }
 
 		[TestMethod]
 		public async Task CreateWithCert()
         {
-            var a = new CERNSSOHttpFilter(await CertUtils.GetCert());
+            var a = new CERNSSOHttpFilter(await CertUtils.GetCert(), new HttpBaseProtocolFilter());
         }
 
 		[TestMethod]
 		public async Task GetUnprotectedIndicoURL()
         {
-            var a = new CERNSSOHttpFilter();
+            var a = new CERNSSOHttpFilter(null, new HttpBaseProtocolFilter());
             await LoadUrl(a, "https://indico.cern.ch/event/336571/");
         }
 
 		[TestMethod]
 		public async Task GetProtectedIndicoURLNoCert()
         {
-            var a = new CERNSSOHttpFilter();
+            var a = new CERNSSOHttpFilter(null, new HttpBaseProtocolFilter());
             await LoadUrl(a, "https://indico.cern.ch/event/359262/", true);
         }
 
 		[TestMethod]
 		public async Task GetProtectedIndicoURL()
         {
-            var a = new CERNSSOHttpFilter(await CertUtils.GetCert());
-            await LoadUrl(a, "https://indico.cern.ch/event/359262/", true);
+            var a = new CERNSSOHttpFilter(await CertUtils.GetCert(), new HttpBaseProtocolFilter());
+            await LoadUrl(a, "https://indico.cern.ch/event/359262/");
+        }
+
+        [TestMethod]
+        public async Task Get2ProtectedIndicoURLs()
+        {
+            var a = new CERNSSOHttpFilter(await CertUtils.GetCert(), new HttpBaseProtocolFilter());
+            await LoadUrl(a, "https://indico.cern.ch/event/359262/");
+            await LoadUrl(a, "https://indico.cern.ch/event/286493/");
         }
 
         // Access the agenda server
