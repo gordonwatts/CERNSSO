@@ -120,6 +120,7 @@
     <Compile Include="..\CERNSSOWindowsDesktopTest\TestUtil.cs">
       <Link>TestUtil.cs</Link>
     </Compile>
+    <Compile Include="CERNSSOPrivateWinRT.cs" />
     <Compile Include="CertificateTests.cs" />
     <Compile Include="CertUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

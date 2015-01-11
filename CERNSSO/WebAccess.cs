@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Security.Cryptography.Certificates;
 using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 
 namespace CERNSSO
@@ -70,7 +72,36 @@ namespace CERNSSO
             gCredentialInformationValid = true;
         }
 #endif
+        /// <summary>
+        /// We will be loading a windows store certificate on our own.
+        /// </summary>
+        /// <param name="task"></param>
+        public static void LoadCertificate(Certificate cert)
+        {
+            if (cert == null)
+            {
+                throw new ArgumentNullException("cert");
+            }
 
+            // When we create a new http handler, make sure the cert and correct cookies are in there
+
+            gCreateHttpHandler = () =>
+            {
+                var h = new HttpBaseProtocolFilter();
+                h.ClientCertificate = cert;
+                var cookie = new HttpCookie("SSOAutologonCertificate", ".cern.ch", "");
+                cookie.Value = "true";
+                h.CookieManager.SetCookie(cookie);
+
+                return new HttpClient(h);
+            };
+
+            // Redirects should take care of everything here.
+            gAuthorize = null;
+
+            // And the rest of the system should know...
+            gCredentialInformationValid = true;
+        }
 #if false
         /// <summary>
         /// Use the Windows Store app's default certificate store to do the authentication.
@@ -144,34 +175,13 @@ namespace CERNSSO
             if (!responseUri.IsCERNSSOAuthUri())
                 return response;
 
-            // At this point the resource is going to require authorization. The next step is
-            // going to depend a bit on the authorization method we are using, so we delegate it
-            // to code that properly deals with that. If no authorize step is required, then
-            // we just assume that the last query has the data we need.
+            // In this code we are now running with auto-redirects. So the fact that we've are asking
+            // for authorization means that we failed to get it - and we aren't with what we know. So we need
+            // to fail back to the user.
 
             if (!gCredentialInformationValid)
                 throw new UnauthorizedAccessException(string.Format("URI {0} requires CERN authentication. None given!", requestUri.OriginalString));
-
-            if (gAuthorize != null)
-            {
-                var authReq = await gAuthorize(response);
-                response = await hc.SendRequestAsync(authReq);
-            }
-
-            // At this point, what we should have back is the standard form that redirects us
-            // to the place where we can fetch our cookies.
-
-            var loginFormRedirectData = ExtractFormInfo(await response.Content.ReadAsStringAsync());
-            if (loginFormRedirectData.Action.IsCERNSSOAuthUri())
-                throw new UnauthorizedAccessException(string.Format("Credentials given didn't allow access to {0}.", requestUri.OriginalString));
-
-            var dataRequest = CreateRequest(loginFormRedirectData.Action, loginFormRedirectData.RepostFields);
-            response = await hc.SendRequestAsync(dataRequest);
-
-            // And the request for our cookies should end up giving us back the content
-            // that we really want!
-
-            return response;
+            throw new UnauthorizedAccessException(string.Format("URI {0} requires CERN autentication. Given authentication did not allow access!", requestUri.OriginalString));
         }
 
         private static HttpClient gClient = null;
@@ -185,14 +195,8 @@ namespace CERNSSO
             if (gClient != null)
                 return gClient;
 
-#if false
             // Create the handler
-            var handler = gCreateHttpHandler != null ? gCreateHttpHandler() : new HttpClient();
-
-            var cookies = new CookieContainer();
-            handler .CookieContainer = cookies;
-#endif
-            gClient = new HttpClient();
+            gClient = gCreateHttpHandler != null ? gCreateHttpHandler() : new HttpClient();
 
             return gClient;
         }
@@ -286,6 +290,5 @@ namespace CERNSSO
             }
             return result;
         }
-
     }
 }
