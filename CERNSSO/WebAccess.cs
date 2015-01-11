@@ -31,7 +31,7 @@ namespace CERNSSO
         /// <summary>
         /// We will be loading a windows store certificate on our own.
         /// </summary>
-        /// <param name="task"></param>
+        /// <param name="cert">The certificate to use for log-in at CERN</param>
         public static void LoadCertificate(Certificate cert)
         {
             if (cert == null)
