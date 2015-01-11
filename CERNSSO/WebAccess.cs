@@ -18,20 +18,6 @@ namespace CERNSSO
     public static class WebAccess
     {
         /// <summary>
-        /// Called to prepare the web request before it is sent out the first time.
-        /// This is called for every single web request that we ask for in this
-        /// library.
-        /// </summary>
-        private static Action<HttpRequestMessage> gPrepWebRequest = null;
-
-        /// <summary>
-        /// The initial web request has come back with no authorization. So, the next step
-        /// we need to do is to do the authorization. This delegate will fill that in.
-        /// The argument is the response from the resource that triggered the login.
-        /// </summary>
-        private static Func<HttpResponseMessage, Task<HttpRequestMessage>> gAuthorize = null;
-
-        /// <summary>
         /// Called to create the HTTP handler. If null, then the default is created.
         /// </summary>
         /// <remarks>Don't set the cookie container. They will be over-written.</remarks>
@@ -42,36 +28,6 @@ namespace CERNSSO
         /// </summary>
         private static bool gCredentialInformationValid = false;
 
-#if WINDOWS_DESKTOP
-        /// <summary>
-        /// Load a certificate to use for logging into CERN (a personal certificate).
-        /// </summary>
-        /// <param name="cert">The certificate to use when we access the CERN website.</param>
-        public static void LoadCertificate(X509Certificate2 cert)
-        {
-            // The header has to be this funny cert request - or we won't get back responses we can interpret.
-            gPrepWebRequest = reqMsg =>
-            {
-                reqMsg.Headers.Add("User-Agent", "curl-sso-certificate/0.5.1 (Mozilla)");
-            };
-
-            // We need a special handler that will sent certificates up to the CERN web sites.
-            gCreateHttpHandler = () =>
-                {
-                    var h = new WebRequestHandler();
-                    h.ClientCertificateOptions = ClientCertificateOption.Manual;
-                    h.ClientCertificates.Add(cert);
-                    return h;
-                };
-
-            // The authentication should happen as part of the redirect, actually. So
-            // we just return the the thing.
-            gAuthorize = null;
-
-            // and let the rest of the system know.
-            gCredentialInformationValid = true;
-        }
-#endif
         /// <summary>
         /// We will be loading a windows store certificate on our own.
         /// </summary>
@@ -96,40 +52,9 @@ namespace CERNSSO
                 return new HttpClient(h);
             };
 
-            // Redirects should take care of everything here.
-            gAuthorize = null;
-
             // And the rest of the system should know...
             gCredentialInformationValid = true;
         }
-#if false
-        /// <summary>
-        /// Use the Windows Store app's default certificate store to do the authentication.
-        /// </summary>
-        public static void UseCertificateStore()
-        {
-            // The header has to be this funny user agent - or we won't get back responses we can interpret.
-            gPrepWebRequest = reqMsg =>
-            {
-                reqMsg.Headers.Add("User-Agent", "curl-sso-certificate/0.5.1 (Mozilla)");
-            };
-
-            // We need a special handler that will sent certificates up to the CERN web sites.
-            gCreateHttpHandler = () =>
-                {
-                    var h = new HttpClientHandler();
-                    h.ClientCertificateOptions = ClientCertificateOption.Automatic;
-                    return h;
-                };
-
-            // The authentication should happen as part of the redirect, actually. So
-            // we just return the the thing.
-            gAuthorize = null;
-
-            // and let the rest of the system know.
-            gCredentialInformationValid = true;
-        }
-#endif
 
         /// <summary>
         /// Clears out all information we've cached.
@@ -137,10 +62,6 @@ namespace CERNSSO
         /// <remarks>This was added to aid in testing, mostly.</remarks>
         public static void ResetCredentials()
         {
-            // Release all the delegates
-            gAuthorize = null;
-            gPrepWebRequest = null;
-
             // Release the web access client - this contains cookies that may match
             // with the above.
             gClient = null;
@@ -175,13 +96,28 @@ namespace CERNSSO
             if (!responseUri.IsCERNSSOAuthUri())
                 return response;
 
-            // In this code we are now running with auto-redirects. So the fact that we've are asking
-            // for authorization means that we failed to get it - and we aren't with what we know. So we need
-            // to fail back to the user.
+            // At this point the resource is going to require authorization. The next step is
+            // going to depend a bit on the authorization method we are using, so we delegate it
+            // to code that properly deals with that. If no authorize step is required, then
+            // we just assume that the last query has the data we need.
 
             if (!gCredentialInformationValid)
                 throw new UnauthorizedAccessException(string.Format("URI {0} requires CERN authentication. None given!", requestUri.OriginalString));
-            throw new UnauthorizedAccessException(string.Format("URI {0} requires CERN autentication. Given authentication did not allow access!", requestUri.OriginalString));
+
+            // At this point, what we should have back is the standard form that redirects us
+            // to the place where we can fetch our cookies.
+
+            var loginFormRedirectData = ExtractFormInfo(await response.Content.ReadAsStringAsync());
+            if (loginFormRedirectData.Action.IsCERNSSOAuthUri())
+                throw new UnauthorizedAccessException(string.Format("Credentials given didn't allow access to {0}.", requestUri.OriginalString));
+
+            var dataRequest = CreateRequest(loginFormRedirectData.Action, loginFormRedirectData.RepostFields);
+            response = await hc.SendRequestAsync(dataRequest);
+
+            // And the request for our cookies should end up giving us back the content
+            // that we really want!
+
+            return response;
         }
 
         private static HttpClient gClient = null;
@@ -199,16 +135,6 @@ namespace CERNSSO
             gClient = gCreateHttpHandler != null ? gCreateHttpHandler() : new HttpClient();
 
             return gClient;
-        }
-
-        /// <summary>
-        /// Call the prep web request delegate.
-        /// </summary>
-        /// <param name="request"></param>
-        private static void PrepWebRequest(HttpRequestMessage request)
-        {
-            if (gPrepWebRequest != null)
-                gPrepWebRequest(request);
         }
 
         /// <summary>
@@ -230,10 +156,6 @@ namespace CERNSSO
                 content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/x-www-form-urlencoded");
                 request.Content = content;
             }
-
-            // Now prep anything else. We have to do this afterwards in case the content,
-            // which also has the headers, is modified.
-            PrepWebRequest(request);
 
             return request;
         }
