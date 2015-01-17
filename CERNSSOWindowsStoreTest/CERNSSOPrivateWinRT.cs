@@ -27,6 +27,14 @@ namespace CERNSSOWindowsStoreTest
         {
             var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1712676"));
             Assert.AreEqual(@"Search for pair produced long-lived neutral particles decaying in the ATLAS hadronic calorimeter in $pp$ collisions at $\sqrt{s}= 8~\rm{TeV}$ - CERN Document Server", title, "Title of private paper");
-        }       
+        }
+
+        [TestMethod]
+        public async Task GetIndicoAgenda()
+        {
+            var response = await WebAccess.GetWebResponse(new Uri("https://indico.cern.ch/event/364432/"));
+            var text = await response.Content.ReadAsStringAsync();
+            Assert.IsTrue(text.Contains("ATLAS Weekly"));
+        }
     }
 }
