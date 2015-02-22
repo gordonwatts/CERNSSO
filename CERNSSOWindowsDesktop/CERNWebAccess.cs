@@ -17,10 +17,10 @@ namespace CERNSSOPCL
         /// <param name="requestUri">The URI of the CERN SSO resource you want to fetch.</param>
         /// <returns>A response object that should have the data requested in it. Or if authentication fails, it will throw an UnauthorizedAccess exception.</returns>
         /// <remarks>If this is called against a URI that doesn't require authentication, this should work just fine.</remarks>
-        public static Task<HttpResponseMessage> GetWebResponse(Uri requestUri)
+        public static Task<HttpResponseMessage> GetWebResponse(Uri requestUri, HttpMethod method = null)
         {
 #if WINDOWS_DESKTOP || WINDOWS_PHONE || CMPWindowsStore
-            return CERNSSO.WebAccess.GetWebResponse(requestUri);
+            return CERNSSO.WebAccess.GetWebResponse(requestUri, method);
 #else
             throw new NotImplementedException("The CERNSSO Platform Specific Library has not been included in this project! This is a coding and deployment error.");
 #endif

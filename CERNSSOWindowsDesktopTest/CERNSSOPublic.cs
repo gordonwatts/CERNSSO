@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 // we are working with.
 #if CMPWindowsStore || WINDOWS_PHONE_APP
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Windows.Web.Http;
 #else
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Net.Http;
 #endif
 
 namespace CERNSSOWindowsDesktopTest
@@ -40,6 +42,17 @@ namespace CERNSSOWindowsDesktopTest
 
             var title = await TestUtil.GetCDSPaperTitle(new Uri(@"https://cds.cern.ch/record/1636207?ln=en"));
             Assert.AreEqual("Measurement of dijet cross sections in pp collisions at 7 TeV centre−of−mass energy using the ATLAS detector - CERN Document Server", title, "Title of public paper");
+        }
+
+        [TestMethod]
+        public async Task GetHeadersOnlyFromPublicRecord()
+        {
+            // Access the HTML on the CDS record at
+            // https://cds.cern.ch/record/1636207?ln=en which is a public
+            // ATLAS paper.
+
+            var response = await WebAccess.GetWebResponse(new Uri("http://indico.cern.ch/event/336571/session/1/contribution/1/material/slides/0.pdf"), HttpMethod.Head);
+            Assert.AreEqual("1/28/2015 4:53:19 PM +01:00", response.Content.Headers.LastModified.ToString());
         }
 
         /// <summary>

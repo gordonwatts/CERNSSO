@@ -76,13 +76,17 @@ namespace CERNSSO
         /// <param name="requestUri">The URI of the CERN SSO resource you want to fetch.</param>
         /// <returns>A response object that should have the data requested in it. Or if authentication fails, it will throw an UnauthorizedAccess exception.</returns>
         /// <remarks>If this is called against a URI that doesn't require authentication, this should work just fine.</remarks>
-        public static async Task<HttpResponseMessage> GetWebResponse(Uri requestUri)
+        public static async Task<HttpResponseMessage> GetWebResponse(Uri requestUri, HttpMethod method = null)
         {
             // Run the web request. Perhaps we will get lucky. We know we are lucky if one
             // of the authentication guys doesn't come back, or the resource that responds
             // is the resource we asked for information from.
 
             var request = CreateRequest(requestUri);
+            if (method != null)
+            {
+                request.Method = method;
+            }
             var hc = GetHttpClient();
             var response = await hc.SendRequestAsync(request);
 
