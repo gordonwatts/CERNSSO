@@ -2,14 +2,14 @@
 <package >
   <metadata>
 	<id>CERNSSO</id>
-	<version>2.0.0</version>
+	<version>2.1.0</version>
 	<authors>Gordon Watts</authors>
 	<owners>Gordon Watts</owners>
 	<licenseUrl>https://github.com/gordonwatts/CERNSSO/blob/master/license.txt</licenseUrl>
 	<projectUrl>https://github.com/gordonwatts/CERNSSO</projectUrl>
 	<requireLicenseAcceptance>false</requireLicenseAcceptance>
 	<description>Library to automate sign on to CERN's Single Sign On web pages and allow the programmer access to web pages behind the SSO. .NET45, Store+Phone (Universal)</description>
-	<releaseNotes>Use the Universal Library approach for Windows Store and Windows Phone (if you can't, don't upgrade!).</releaseNotes>
+	<releaseNotes>Added ability to control what HttpMethod is used (so you can get just headers if you want).</releaseNotes>
 	<copyright>Copyright 2015</copyright>
 	<tags>CERN Security SSO</tags>
 	<dependencies>
