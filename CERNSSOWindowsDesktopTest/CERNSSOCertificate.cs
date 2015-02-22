@@ -60,7 +60,7 @@ namespace CERNSSOWindowsDesktopTest
             try
             {
                 var allcerts = st.Certificates.Cast<X509Certificate2>().Where(s => s.SubjectName.Name.Contains("DC=cern") && s.SubjectName.Name.Contains("OU=Users")).ToArray();
-                Assert.AreEqual(1, allcerts.Length, "Should have exactly one good CERT in the store!");
+                Assert.AreEqual(2, allcerts.Length, "Should have exactly one good CERT in the store!");
                 return allcerts[0];
             }
             finally
